@@ -51,8 +51,6 @@ class RetrieveThenReadApproach(Approach):
         embedding_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_dimensions: int,
-        sourcepage_field: str,
-        content_field: str,
         query_language: str,
         query_speller: str,
     ):
@@ -68,8 +66,6 @@ class RetrieveThenReadApproach(Approach):
             embedding_model: Name of embedding model
             embedding_deployment: Optional Azure embedding deployment
             embedding_dimensions: Dimension of embedding vectors
-            sourcepage_field: Field name containing source page reference
-            content_field: Field name containing document content
             query_language: Language code for search queries
             query_speller: Spelling correction mode
         """
@@ -82,8 +78,6 @@ class RetrieveThenReadApproach(Approach):
         self.embedding_dimensions = embedding_dimensions
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
-        self.sourcepage_field = sourcepage_field
-        self.content_field = content_field
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model, self.ALLOW_NON_GPT_MODELS)

@@ -26,20 +26,23 @@ Ensure the following are installed and configured before setting up the project:
     azd auth login
     ```
 
-3. **Deploy the project infrastructure:**
+3. **Create RG for your App with Azure CLI (azd):**
+    ```bash
+    az group create --name my-predefined-resource-group
+    ```
+
+5. **Document Ingestion process:**
+    - In the root directory of the project, create a folder named `data`.
+    - Add the ingestion files required by your project into the `data` folder.
+
+4. **Deploy the project infrastructure:**
     ```bash
     azd up
     ```
 
-4. **Document Ingestion process:**
-    - In the root directory of the project, create a folder named `data`.
-    - Add the ingestion files required by your project into the `data` folder.
-
-5. **Deploy the Application:**
+6. **Deploy the Application:**
     ```bash
     azd deploy
     ```
 
 Once the above steps are complete, your project will be set up and ready for use.
-
-tesdt
