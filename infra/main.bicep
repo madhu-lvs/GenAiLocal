@@ -5,27 +5,26 @@ targetScope = 'subscription'
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
 param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
 param allowedOrigin string = '' // Used for optional CORS support for alternate frontends
-param applicationInsightsDashboardName string = '' // #BHE not required since they didn't deploy the dashboard
-param applicationInsightsName string = 'altgenai-appins-bhe-dev02' // #BHE hardcoded
-param appServicePlanName string = 'altgenai-asp-bhe-dev02' // #BHE hardcoded
-param appServiceSkuName string // #BHE hardcoded later in the script, no changes here unless you want to change assignments starting around line 410
-//param authTenantId string = '' // #BHE not needed; this is for RBAC
+param applicationInsightsDashboardName string = ''
+param applicationInsightsName string = ''
+param appServicePlanName string = ''
+param appServiceSkuName string
+param authTenantId string = ''
 param azureContainerAppsWorkloadProfile string
 @secure()
-param azureOpenAiApiKey string = '' // // #BHE deployment should pick this up without hardcoding but could be a problem because we can't get the key after the resource has been provisioned
-param azureOpenAiApiVersion string = '' // #BHE deployment should pick this up without hardcoding
-param azureOpenAiCustomUrl string = '' // #BHE deployment should pick this up without hardcoding
+param azureOpenAiApiKey string = ''
+param azureOpenAiApiVersion string = ''
+param azureOpenAiCustomUrl string = ''
 // ===B
-param backendServiceName string = '' // #BHE dynamically generated, shouldn't require hardcoding
+param backendServiceName string = ''
 // ===C
-param clientAppId string = '' // #BHE dynamically generated, shouldn't require hardcoding. This should only be needed for RBAC now but no guarantees
+param clientAppId string = ''
 @secure()
 param clientAppSecret string = ''
-// #BHE not needed (no computer vision implementation)
-// param computerVisionResourceGroupName string = ''
-// param computerVisionResourceGroupLocation string = ''
-// param computerVisionServiceName string = ''
-// param computerVisionSkuName string
+param computerVisionResourceGroupName string = ''
+param computerVisionResourceGroupLocation string = ''
+param computerVisionServiceName string = ''
+param computerVisionSkuName string
 param containerRegistryName string = deploymentTarget == 'containerapps'
   ? '${replace(environmentName, '-', '')}acr'
   : ''
@@ -35,16 +34,16 @@ param deployAzureOpenAi bool = openAiHost == 'azure'
 param deploymentTarget string = 'appservice'
 param disableAppServicesAuthentication bool = false // Force using MSAL app authentication instead of built-in App Service authentication
 @description('Location for the Document Intelligence resource group')
-@allowed(['eastus', 'westus2', 'westeurope', 'westus3'])
+@allowed(['eastus', 'westus2', 'westeurope'])
 @metadata({
   azd: {
     type: 'location'
   }
 })
-param documentIntelligenceResourceGroupLocation string = 'westus3' // #BHE hardcoded
-param documentIntelligenceResourceGroupName string = 'altgenai-rg-bhe-dev02' // #BHE hardcoded
-param documentIntelligenceServiceName string = 'altgenai-cogacc-bhe-dev02' // #BHE hardcoded
-param documentIntelligenceSkuName string = 'Standard' // #BHE hardcoded
+param documentIntelligenceResourceGroupLocation string
+param documentIntelligenceResourceGroupName string = ''
+param documentIntelligenceServiceName string = ''
+param documentIntelligenceSkuName string
 // ===E
 param embeddingDeploymentCapacity int = 0
 param embeddingDeploymentName string = ''
@@ -53,9 +52,9 @@ param embeddingDimensions int = 0
 param embeddingModelName string = ''
 param enableGlobalDocuments bool = false // To allow authenticated users to search on documents that have no access controls assigned, even when access control is required
 @description('Enable language picker')
-param enableLanguagePicker bool = false // #BHE not needed but too much work to unwind at this time so just leave it false
-param enableUnauthenticatedAccess bool = false // #BHE leave false
-param enforceAccessControl bool = false // #BHE leave false, only required for RBAC
+param enableLanguagePicker bool = false
+param enableUnauthenticatedAccess bool = false
+param enforceAccessControl bool = false
 @minLength(1)
 @maxLength(64)
 @description('Name of the the environment which is used to generate a short unique hash used in all resources.')
@@ -66,7 +65,7 @@ param gpt35DeploymentCapacity int = 30
 param gpt35DeploymentName string = 'opensourcerer-completions-35t'
 param gpt35DeploymentVersion string = '0613'
 param gpt35ModelName string = 'gpt-35-turbo'
-param gpt4DeploymentCapacity int = 200 // may need to reduce depending on capacity available
+param gpt4DeploymentCapacity int = 50
 param gpt4DeploymentName string = 'opensourcerer-completions-4o'
 param gpt4ModelName string = 'gpt-4o'
 param gpt4ModelVersion string = '2024-05-13'
@@ -85,14 +84,14 @@ param isAzureOpenAiHost bool = startsWith(openAiHost, 'azure')
 // ===L
 @minLength(1)
 @description('Primary location for all resources')
-param location string = 'westus3' // #BHE hardcoded
-//param logAnalyticsName string = '' // #BHE not needed
+param location string
+param logAnalyticsName string = ''
 // ===O
-@allowed(['azure', 'openai', 'azure_custom']) 
-param openAiHost string // #BHE not needed, this is for direct API connection to OpenAI instead of Azure OpenAI
+@allowed(['azure', 'openai', 'azure_custom'])
+param openAiHost string
 @secure()
-param openAiApiKey string = '' // #BHE not needed, this is for direct API connection to OpenAI instead of Azure OpenAI
-param openAiApiOrganization string = '' // #BHE not needed, this is for direct API connection to OpenAI instead of Azure OpenAI
+param openAiApiKey string = ''
+param openAiApiOrganization string = ''
 @description('Location for the OpenAI resource group')
 @allowed([
   'canadaeast'
@@ -100,68 +99,67 @@ param openAiApiOrganization string = '' // #BHE not needed, this is for direct A
   'eastus2'
   'westus'
   'westus2'
-  'westus3'
 ])
 @metadata({
   azd: {
     type: 'location'
   }
 })
-param openAiResourceGroupLocation string = 'westus3' // #BHE hardcoded
-param openAiResourceGroupName string = 'altgenai-rg-bhe-dev02' // #BHE hardcoded
-param openAiServiceName string = 'altgenai-openai-bhe-dev02' // #BHE hardcoded
-param openAiSkuName string = 'S0' // #BHE hardcoded
+param openAiResourceGroupLocation string
+param openAiResourceGroupName string = ''
+param openAiServiceName string = ''
+param openAiSkuName string = 'S0'
 // ===P
 @description('Id of the user or app to assign application roles')
-param principalId string = '' // #BHE shouldn't be hardcoded
+param principalId string = ''
 @description('Public network access value for all deployed resources')
 @allowed(['Enabled', 'Disabled'])
 param publicNetworkAccess string = 'Enabled'
 // ===R
-param resourceGroupName string = 'altgenai-rg-bhe-dev02' // #BHE hardcoded
+param resourceGroupName string = ''
 @description('Whether the deployment is running on Azure DevOps Pipeline')
-param runInADO string = 'true' // Change this for local deployment 
+param runInADO string = ''
 @description('Whether the deployment is running on GitHub Actions')
-param runInGIT string = '' // #BHE hanot needed - don't think we can use GH actions at BHE anyway
+param runInGIT string = ''
 // ===S
 param searchIndexName string
 param searchQueryLanguage string
 param searchQuerySpeller string
-param searchServiceLocation string = 'westus3' // #BHE hardcoded
-param searchServiceName string = 'altgenai-srchsvc-bhe-dev02' // #BHE hardcoded
-param searchServiceResourceGroupName string = 'altgenai-rg-bhe-dev02' // #BHE hardcoded
+param searchServiceLocation string = ''
+param searchServiceName string = ''
+param searchServiceResourceGroupName string = ''
 param searchServiceSemanticRankerLevel string
-param searchServiceSkuName string = 'S0' // #BHE hardcoded
-param serverAppId string = '' // #BHE shouldn't be needed for non-RBAC deployment
+param searchServiceSkuName string = 'S0'
+param serverAppId string = ''
 @secure()
-param serverAppSecret string = '' // #BHE shouldn't be needed for non-RBAC deployment
-// param speechServiceLocation string = ''
-// param speechServiceName string = ''
-// param speechServiceResourceGroupName string = ''
-// param speechServiceSkuName string
-param storageAccountName string = 'altgenaisa02bhedev02' // #BHE hardcoded
+param serverAppSecret string = ''
+param speechServiceLocation string = ''
+param speechServiceName string = ''
+param speechServiceResourceGroupName string = ''
+param speechServiceSkuName string
+param storageAccountName string = ''
 param storageContainerName string = 'content'
 param storageResourceGroupLocation string = location
-param storageResourceGroupName string = 'altgenai-srchsvc-bhe-dev02' // #BHE hardcoded
+param storageResourceGroupName string = ''
 param storageSkuName string
 // ===T
 param tenantId string = tenant().tenantId
 // ===U
-param useAuthentication bool = false // #BHE leave false, only required for RBAC
+param useAuthentication bool = false
 param useGPT4V bool = false
 param useGPT4 bool = true
 @description('Use Application Insights for monitoring and performance tracing')
-param useApplicationInsights bool = false // #BHE leave false
+param useApplicationInsights bool = false
 @description('Add a private endpoints for network connectivity')
-param usePrivateEndpoint bool = true // #BHE changed for PE deployment. The code included here has never been tested though
+param usePrivateEndpoint bool = false
 param userStorageAccountName string = ''
 param userStorageContainerName string = 'user-content'
-// @description('Use speech recognition feature in browser')
-// param useSpeechInputBrowser bool = false
-// @description('Use speech synthesis in browser')
-// param useSpeechOutputBrowser bool = false
-// @description('Use Azure speech service for reading out text')
-// param useSpeechOutputAzure bool = false
+@description('Use speech recognition feature in browser')
+param useSpeechInputBrowser bool = false
+@description('Use speech synthesis in browser')
+param useSpeechOutputBrowser bool = false
+@description('Use Azure speech service for reading out text')
+param useSpeechOutputAzure bool = false
 @description('Use chat history feature in browser')
 param useChatHistoryBrowser bool = false
 @description('Show options to use vector embeddings for searching in the app UI')
@@ -169,9 +167,9 @@ param useVectors bool = false
 @description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
 param useIntegratedVectorization bool = true
 @description('Enable user document upload feature')
-param useUserUpload bool = false // #BHE this ties to code for "user upload" that is not complete but may be worth exploring
-param useLocalPdfParser bool = false // #BHE leave false since we are using Doc Int
-param useLocalHtmlParser bool = false // #BHE leave false since we are using Doc Int 
+param useUserUpload bool = false
+param useLocalPdfParser bool = false
+param useLocalHtmlParser bool = false
 // ===W
 @description('Used by azd for containerapps deployment')
 param webAppExists bool
@@ -186,8 +184,8 @@ var appEnvVariables = {
   APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights
     ? monitoring.outputs.applicationInsightsConnectionString
     : ''
-  //AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri // #BHE not needed
-  //AZURE_AUTH_TENANT_ID: tenantIdForAuth // #BHE not needed
+  AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri
+  AZURE_AUTH_TENANT_ID: tenantIdForAuth
   AZURE_CLIENT_APP_ID: clientAppId
   AZURE_CLIENT_APP_SECRET: clientAppSecret
   AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
@@ -214,16 +212,16 @@ var appEnvVariables = {
   AZURE_SEARCH_SERVICE: searchService.outputs.name
   AZURE_SERVER_APP_ID: serverAppId
   AZURE_SERVER_APP_SECRET: serverAppSecret
-  // AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.resourceId : ''
-  // AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
+  AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.resourceId : ''
+  AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
   AZURE_STORAGE_ACCOUNT: storage.outputs.name
   AZURE_STORAGE_CONTAINER: storageContainerName
   AZURE_TENANT_ID: tenantId
   AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage.outputs.name : ''
   AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
-  // AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
+  AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
   // CORS support, for frontends on other hosts
-  ENABLE_LANGUAGE_PICKER: enableLanguagePicker // #BHE needed because we need to default to English... I wish I had never included this
+  ENABLE_LANGUAGE_PICKER: enableLanguagePicker
   OPENAI_API_KEY: openAiApiKey
   OPENAI_HOST: openAiHost
   OPENAI_ORGANIZATION: openAiApiOrganization
@@ -234,13 +232,14 @@ var appEnvVariables = {
   USE_GPT4V: useGPT4V
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
   USE_LOCAL_PDF_PARSER: useLocalPdfParser
-  // USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
-  // USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
-  // USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
-  USE_USER_UPLOAD: useUserUpload
+  USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
+  USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
+  USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
   USE_VECTORS: useVectors
+  SECRET_KEY: 'f1c4a3b5e6f789ab12cd34ef56g78901h234567890ab1234cd5678ef9012abcd'
+  USERS: 'eyJhZG1pbl91c2VyIjp7InBhc3N3b3JkIjoiYWRtaW4xMjMiLCJyb2xlIjoiQWRtaW4ifSwicG93ZXJfdXNlciI6eyJwYXNzd29yZCI6InBvd2VyMTIzIiwicm9sZSI6IlBvd2VyIn0sImF1dGhfdXNlciI6eyJwYXNzd29yZCI6ImF1dGgxMjMiLCJyb2xlIjoiQXV0aCJ9fQ=='
 }
-var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0' // #BHE not needed
+var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
 var chatGpt = {
   modelName: !useGPT4 ? gpt35ModelName : gpt4ModelName
   deploymentName: !useGPT4 ? gpt35DeploymentName : gpt4DeploymentName
@@ -277,7 +276,7 @@ var embedding = {
   modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
   deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'opensourcerer-embeddings-002'
   deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '2'
-  deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 200
+  deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 50
   dimensions: embeddingDimensions != 0 ? embeddingDimensions : 1536
 }
 var environmentData = environment()
@@ -306,7 +305,8 @@ var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi &&
         groupId: 'account'
         dnsZoneName: 'privatelink.openai.azure.com'
         resourceIds: concat(
-          [openAi.outputs.resourceId], [],
+          [openAi.outputs.resourceId],
+          useGPT4V ? [computerVision.outputs.resourceId] : [],
           !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : []
         )
       }
@@ -335,12 +335,12 @@ var principalType = empty(runInGIT) && empty(runInADO) ? 'User' : 'ServicePrinci
 var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection)
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
-//var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId // #BHE not needed
+var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 
 // === RESOURCES ===
-// resource computerVisionResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(computerVisionResourceGroupName)) {
-//   name: !empty(computerVisionResourceGroupName) ? computerVisionResourceGroupName : resourceGroup.name
-// }
+resource computerVisionResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(computerVisionResourceGroupName)) {
+  name: !empty(computerVisionResourceGroupName) ? computerVisionResourceGroupName : resourceGroup.name
+}
 resource documentIntelligenceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(documentIntelligenceResourceGroupName)) {
   name: !empty(documentIntelligenceResourceGroupName) ? documentIntelligenceResourceGroupName : resourceGroup.name
 }
@@ -355,9 +355,9 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(searchServiceResourceGroupName)) {
   name: !empty(searchServiceResourceGroupName) ? searchServiceResourceGroupName : resourceGroup.name
 }
-// resource speechResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(speechServiceResourceGroupName)) {
-//   name: !empty(speechServiceResourceGroupName) ? speechServiceResourceGroupName : resourceGroup.name
-// }
+resource speechResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(speechServiceResourceGroupName)) {
+  name: !empty(speechServiceResourceGroupName) ? speechServiceResourceGroupName : resourceGroup.name
+}
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
 }
@@ -406,10 +406,10 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
     enableUnauthenticatedAccess: enableUnauthenticatedAccess
     disableAppServicesAuthentication: disableAppServicesAuthentication
     clientSecretSettingName: !empty(clientAppSecret) ? 'AZURE_CLIENT_APP_SECRET' : ''
-    //authenticationIssuerUri: authenticationIssuerUri // #BHE not needed
-    use32BitWorkerProcess: appServiceSkuName == 'l1v2' // #BHE hardcoded
-    alwaysOn: appServiceSkuName != 'l1v2' // #BHE hardcoded
-    appSettings: appEnvVariables // #BHE not needed
+    authenticationIssuerUri: authenticationIssuerUri
+    use32BitWorkerProcess: appServiceSkuName == 'F1'
+    alwaysOn: appServiceSkuName != 'F1'
+    appSettings: appEnvVariables
   }
 }
 
@@ -470,25 +470,25 @@ module acaIdentity 'core/security/aca-identity.bicep' = if (deploymentTarget == 
 // === Cognitive Services ===
 
 // Computer Vision Service
-// module computerVision 'br/public:avm/res/cognitive-services/account:0.5.4' = if (useGPT4V) {
-//   name: 'computerVision'
-//   scope: computerVisionResourceGroup
-//   params: {
-//     name: !empty(computerVisionServiceName)
-//       ? computerVisionServiceName
-//       : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
-//     kind: 'ComputerVision'
-//     networkAcls: {
-//       defaultAction: 'Allow'
-//     }
-//     customSubDomainName: !empty(computerVisionServiceName)
-//       ? computerVisionServiceName
-//       : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
-//     location: computerVisionResourceGroupLocation
-//     tags: tags
-//     sku: computerVisionSkuName
-//   }
-// }
+module computerVision 'br/public:avm/res/cognitive-services/account:0.5.4' = if (useGPT4V) {
+  name: 'computerVision'
+  scope: computerVisionResourceGroup
+  params: {
+    name: !empty(computerVisionServiceName)
+      ? computerVisionServiceName
+      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
+    kind: 'ComputerVision'
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
+    customSubDomainName: !empty(computerVisionServiceName)
+      ? computerVisionServiceName
+      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
+    location: computerVisionResourceGroupLocation
+    tags: tags
+    sku: computerVisionSkuName
+  }
+}
 
 // Document Intelligence Service (formerly Form Recognizer)
 module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.5.4' = {
@@ -537,23 +537,23 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.5.4' = if (isAzure
 }
 
 // Speech Service
-// module speech 'br/public:avm/res/cognitive-services/account:0.5.4' = if (useSpeechOutputAzure) {
-//   name: 'speech-service'
-//   scope: speechResourceGroup
-//   params: {
-//     name: !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
-//     kind: 'SpeechServices'
-//     networkAcls: {
-//       defaultAction: 'Allow'
-//     }
-//     customSubDomainName: !empty(speechServiceName)
-//       ? speechServiceName
-//       : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
-//     location: !empty(speechServiceLocation) ? speechServiceLocation : location
-//     tags: tags
-//     sku: speechServiceSkuName
-//   }
-// }
+module speech 'br/public:avm/res/cognitive-services/account:0.5.4' = if (useSpeechOutputAzure) {
+  name: 'speech-service'
+  scope: speechResourceGroup
+  params: {
+    name: !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
+    kind: 'SpeechServices'
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
+    customSubDomainName: !empty(speechServiceName)
+      ? speechServiceName
+      : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
+    location: !empty(speechServiceLocation) ? speechServiceLocation : location
+    tags: tags
+    sku: speechServiceSkuName
+  }
+}
 
 // === Monitoring ===
 
@@ -580,9 +580,9 @@ module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) 
     applicationInsightsName: !empty(applicationInsightsName)
       ? applicationInsightsName
       : '${abbrs.insightsComponents}${resourceToken}'
- //   logAnalyticsName: !empty(logAnalyticsName) #BHE not needed
- //     ? logAnalyticsName
- //     : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
+    logAnalyticsName: !empty(logAnalyticsName)
+      ? logAnalyticsName
+      : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
     publicNetworkAccess: publicNetworkAccess
   }
 }
@@ -599,7 +599,7 @@ module searchDiagnostics 'core/search/search-diagnostics.bicep' = if (useApplica
 
 // === Search ===
 
-// Search Service // #BHE we are likely going to error out here due to permissions right now. This is where the generic index is created to get AI Search working
+// Search Service
 module searchService 'core/search/search-services.bicep' = {
   name: 'search-service'
   scope: searchServiceResourceGroup
@@ -686,17 +686,17 @@ module cognitiveServicesRoleUser 'core/security/role.bicep' = {
   }
 }
 
-// module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
-//   scope: computerVisionResourceGroup
-//   name: 'computervision-role-backend'
-//   params: {
-//     principalId: (deploymentTarget == 'appservice')
-//       ? backend.outputs.identityPrincipalId
-//       : acaBackend.outputs.identityPrincipalId
-//     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
-//     principalType: 'ServicePrincipal'
-//   }
-// }
+module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
+  scope: computerVisionResourceGroup
+  name: 'computervision-role-backend'
+  params: {
+    principalId: (deploymentTarget == 'appservice')
+      ? backend.outputs.identityPrincipalId
+      : acaBackend.outputs.identityPrincipalId
+    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
+    principalType: 'ServicePrincipal'
+  }
+}
 
 module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
   scope: documentIntelligenceResourceGroup
@@ -837,27 +837,27 @@ module searchSvcContribRoleUser 'core/security/role.bicep' = {
   }
 }
 
-// module speechRoleBackend 'core/security/role.bicep' = {
-//   scope: speechResourceGroup
-//   name: 'speech-role-backend'
-//   params: {
-//     principalId: (deploymentTarget == 'appservice')
-//       ? backend.outputs.identityPrincipalId
-//       : acaBackend.outputs.identityPrincipalId
-//     roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
-//     principalType: 'ServicePrincipal'
-//   }
-// }
+module speechRoleBackend 'core/security/role.bicep' = {
+  scope: speechResourceGroup
+  name: 'speech-role-backend'
+  params: {
+    principalId: (deploymentTarget == 'appservice')
+      ? backend.outputs.identityPrincipalId
+      : acaBackend.outputs.identityPrincipalId
+    roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
+    principalType: 'ServicePrincipal'
+  }
+}
 
-// module speechRoleUser 'core/security/role.bicep' = {
-//   scope: speechResourceGroup
-//   name: 'speech-role-user'
-//   params: {
-//     principalId: principalId
-//     roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
-//     principalType: principalType
-//   }
-// }
+module speechRoleUser 'core/security/role.bicep' = {
+  scope: speechResourceGroup
+  name: 'speech-role-user'
+  params: {
+    principalId: principalId
+    roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
+    principalType: principalType
+  }
+}
 
 module storageContribRoleUser 'core/security/role.bicep' = {
   scope: storageResourceGroup
@@ -924,8 +924,8 @@ module storageRoleUser 'core/security/role.bicep' = {
 }
 
 // === OUTPUTS ===
-// #BHE content excluded here will have cascading impacts starting with parameters.main
-//output AZURE_AUTH_TENANT_ID string = authTenantId
+
+output AZURE_AUTH_TENANT_ID string = authTenantId
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = deploymentTarget == 'containerapps' ? containerApps.outputs.registryLoginServer : ''
 output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroup.name
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
@@ -945,8 +945,8 @@ output AZURE_SEARCH_SEMANTIC_RANKER string = actualSearchServiceSemanticRankerLe
 output AZURE_SEARCH_SERVICE string = searchService.outputs.name
 output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.principalId
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
-// output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
-// output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
+output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
+output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
@@ -955,7 +955,7 @@ output AZURE_USE_AUTHENTICATION bool = useAuthentication
 output AZURE_USERSTORAGE_ACCOUNT string = useUserUpload ? userStorage.outputs.name : ''
 output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName
 output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
-// output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
+output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
 output BACKEND_URI string = deploymentTarget == 'appservice' ? backend.outputs.uri : acaBackend.outputs.uri
 output OPENAI_HOST string = openAiHost
 output USE_FEATURE_INT_VECTORIZATION bool = useIntegratedVectorization

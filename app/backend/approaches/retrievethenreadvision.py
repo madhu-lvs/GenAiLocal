@@ -44,8 +44,6 @@ class RetrieveThenReadVisionApproach(Approach):
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
-        sourcepage_field: str,
-        content_field: str,
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
@@ -58,8 +56,6 @@ class RetrieveThenReadVisionApproach(Approach):
         self.embedding_model = embedding_model
         self.embedding_deployment = embedding_deployment
         self.embedding_dimensions = embedding_dimensions
-        self.sourcepage_field = sourcepage_field
-        self.content_field = content_field
         self.gpt4v_deployment = gpt4v_deployment
         self.gpt4v_model = gpt4v_model
         self.query_language = query_language
