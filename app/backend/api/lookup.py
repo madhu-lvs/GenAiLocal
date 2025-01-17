@@ -8,7 +8,6 @@ from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 bp = Blueprint('lookup', __name__)
 
 @bp.post("/lookup")
-@authenticated_required
 async def document_lookup():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415

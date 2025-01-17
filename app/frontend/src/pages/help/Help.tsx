@@ -1,18 +1,9 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useMsal } from "@azure/msal-react";
-import { LoginContext } from "../../loginContext";
 import styles from "./Help.module.css";
 
 export function Component(): JSX.Element {
     const [activeTab, setActiveTab] = useState("generativeAI"); // State to manage active tab
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<unknown>();
-
-    const client = useMsal().instance;
-    const { loggedIn } = useContext(LoginContext);
-    const { t, i18n } = useTranslation();
 
     useEffect(() => {}, []);
 

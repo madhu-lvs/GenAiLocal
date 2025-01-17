@@ -45,7 +45,7 @@ param documentIntelligenceResourceGroupName string = ''
 param documentIntelligenceServiceName string = ''
 param documentIntelligenceSkuName string
 // ===E
-param embeddingDeploymentCapacity int = 0
+param embeddingDeploymentCapacity int = 20
 param embeddingDeploymentName string = ''
 param embeddingDeploymentVersion string = ''
 param embeddingDimensions int = 0
@@ -236,8 +236,6 @@ var appEnvVariables = {
   USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
   USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
   USE_VECTORS: useVectors
-  SECRET_KEY: 'f1c4a3b5e6f789ab12cd34ef56g78901h234567890ab1234cd5678ef9012abcd'
-  USERS: 'eyJhZG1pbl91c2VyIjp7InBhc3N3b3JkIjoiYWRtaW4xMjMiLCJyb2xlIjoiQWRtaW4ifSwicG93ZXJfdXNlciI6eyJwYXNzd29yZCI6InBvd2VyMTIzIiwicm9sZSI6IlBvd2VyIn0sImF1dGhfdXNlciI6eyJwYXNzd29yZCI6ImF1dGgxMjMiLCJyb2xlIjoiQXV0aCJ9fQ=='
 }
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
 var chatGpt = {

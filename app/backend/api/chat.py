@@ -9,7 +9,6 @@ bp = Blueprint('chat', __name__)
 
 @bp.route("/chat", methods=["POST"])
 @authenticated
-@authenticated_required
 @handle_exceptions
 async def chat(auth_claims: Dict[str, Any]):
     if not request.is_json:
@@ -25,7 +24,6 @@ async def chat(auth_claims: Dict[str, Any]):
 
 @bp.route("/chat/stream", methods=["POST"])
 @authenticated
-@authenticated_required
 @handle_exceptions
 async def chat_stream(auth_claims: Dict[str, Any]):
     if not request.is_json:

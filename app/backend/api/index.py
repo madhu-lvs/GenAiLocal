@@ -6,7 +6,6 @@ from azure.core.exceptions import ResourceNotFoundError
 bp = Blueprint('index', __name__)
 
 @bp.post("/rebuild_index")
-@roles_required(['Admin'])
 async def rebuild_index():
     try:
         ingester = current_app.config[CONFIG_INGESTER]
@@ -17,7 +16,6 @@ async def rebuild_index():
             current_app.logger.exception("Error rebuilding index", error)
 
 @bp.post("/rerun_index")
-@roles_required(['Admin'])
 async def rerun_index():
     try:
         ingester = current_app.config[CONFIG_INGESTER]

@@ -39,7 +39,6 @@ import { GPT4VSettings } from "../../components/GPT4VSettings";
 import { LoginContext } from "../../loginContext";
 import { LanguagePicker } from "../../i18n/LanguagePicker";
 import { SnapshotButton } from "../../components/SnapshotButton/SnapshotButton";
-import { useOutletContext } from "react-router-dom";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -88,7 +87,6 @@ const Chat = () => {
     const [showChatHistoryBrowser, setShowChatHistoryBrowser] = useState<boolean>(false);
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
-    const { userRole } = useOutletContext<{ userRole: string | null }>();
 
     const speechConfig: SpeechConfig = {
         speechUrls,
@@ -377,9 +375,7 @@ const Chat = () => {
                     <SnapshotButton className={styles.commandButton} answers={answers} disabled={answers.length === 0 || isLoading} />
                     <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                     {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
-                    {(userRole === "Admin" || userRole === "Power") && (
-                        <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
-                    )}
+                    <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
                 </div>
             </div>
             <div className={styles.chatRoot} style={{ marginLeft: isHistoryPanelOpen ? "300px" : "0" }}>
