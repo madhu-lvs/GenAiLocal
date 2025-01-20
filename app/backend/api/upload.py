@@ -24,7 +24,6 @@ async def list_blobs_with_pagination(container_client: ContainerClient):
     return blobs
 
 @bp.post("/upload")
-@roles_required(['Admin'])
 async def upload():
     request_files = await request.files
     if "file" not in request_files:
@@ -44,7 +43,6 @@ async def upload():
 
 
 @bp.post("/delete_uploaded")
-@roles_required(['Admin'])
 async def delete_uploaded():
     request_json = await request.get_json()
     filename = request_json.get("filename")
@@ -56,7 +54,6 @@ async def delete_uploaded():
 
 
 @bp.get("/list_uploaded")
-@roles_required(['Admin'])
 async def list_uploaded():
     blob_container_client: ContainerClient = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
     files = []
