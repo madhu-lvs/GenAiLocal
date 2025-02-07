@@ -1,4 +1,4 @@
-const BACKEND_URI = "";
+const BACKEND_URI = "https://app-backend-s6dpoygxjklmi.azurewebsites.net";
 
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config, SimpleAPIResponse } from "./models";
 import { useLogin, getToken, isUsingAppServicesLogin } from "../authConfig";
@@ -40,7 +40,7 @@ export async function askApi(request: ChatAppRequest, idToken: string | undefine
 }
 
 export async function chatApi(request: ChatAppRequest, shouldStream: boolean, idToken: string | undefined): Promise<Response> {
-    let url = `${BACKEND_URI}/chat`;
+    let url = `/chat`;
     if (shouldStream) {
         url += "/stream";
     }

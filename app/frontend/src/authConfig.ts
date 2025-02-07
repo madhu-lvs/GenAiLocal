@@ -2,9 +2,11 @@
 
 import { IPublicClientApplication } from "@azure/msal-browser";
 
-const appServicesAuthTokenUrl = ".auth/me";
-const appServicesAuthTokenRefreshUrl = ".auth/refresh";
-const appServicesAuthLogoutUrl = ".auth/logout?post_logout_redirect_uri=/";
+const baseUrl = "https://app-backend-s6dpoygxjklmi.azurewebsites.net";
+
+const appServicesAuthTokenUrl = `${baseUrl}/.auth/me`;
+const appServicesAuthTokenRefreshUrl = `${baseUrl}/.auth/refresh`;
+const appServicesAuthLogoutUrl = `${baseUrl}/.auth/logout?post_logout_redirect_uri=/`;
 
 interface AppServicesToken {
     id_token: string;
@@ -54,7 +56,7 @@ interface AuthSetup {
 
 // Fetch the auth setup JSON data from the API if not already cached
 async function fetchAuthSetup(): Promise<AuthSetup> {
-    const response = await fetch("/auth_setup");
+    const response = await fetch(`${baseUrl}/auth_setup`);
     if (!response.ok) {
         throw new Error(`auth setup response was not ok: ${response.status}`);
     }
