@@ -2,7 +2,9 @@
 
 import { IPublicClientApplication } from "@azure/msal-browser";
 
-const baseUrl = "https://app-backend-s6dpoygxjklmi.azurewebsites.net";
+//const baseUrl = "https://app-backend-s6dpoygxjklmi.azurewebsites.net";
+
+const baseUrl = "https://app-backend-gmwrige54ltyi.azurewebsites.net";
 
 const appServicesAuthTokenUrl = `${baseUrl}/.auth/me`;
 const appServicesAuthTokenRefreshUrl = `${baseUrl}/.auth/refresh`;
